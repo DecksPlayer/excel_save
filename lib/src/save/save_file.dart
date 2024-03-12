@@ -100,47 +100,27 @@ class Save {
           XmlElement(XmlName('v'), [], [XmlText('')]),
         ];
       case IntCellValue():
-        final String v = switch (numberFormat) {
-          NumericNumFormat() => numberFormat.writeInt(value),
-          _ => throw Exception(
-              '$numberFormat does not work for ${value.runtimeType}'),
-        };
+        final String v = _valueAsNumericFormat(numberFormat!,'int',value);
         children = [
           XmlElement(XmlName('v'), [], [XmlText(v)]),
         ];
       case DoubleCellValue():
-        final String v = switch (numberFormat) {
-          NumericNumFormat() => numberFormat.writeDouble(value),
-          _ => throw Exception(
-              '$numberFormat does not work for ${value.runtimeType}'),
-        };
+        final String v = _valueAsNumericFormat(numberFormat,'double', value);
         children = [
           XmlElement(XmlName('v'), [], [XmlText(v)]),
         ];
       case DateTimeCellValue():
-        final String v = switch (numberFormat) {
-          DateTimeNumFormat() => numberFormat.writeDateTime(value),
-          _ => throw Exception(
-              '$numberFormat does not work for ${value.runtimeType}'),
-        };
+       final String v = _valueAsDatetimeFormat(numberFormat, 'datetime', value);
         children = [
           XmlElement(XmlName('v'), [], [XmlText(v)]),
         ];
       case DateCellValue():
-        final String v = switch (numberFormat) {
-          DateTimeNumFormat() => numberFormat.writeDate(value),
-          _ => throw Exception(
-              '$numberFormat does not work for ${value.runtimeType}'),
-        };
+        final String v = _valueAsDatetimeFormat(numberFormat, 'datecellvalue', value);
         children = [
           XmlElement(XmlName('v'), [], [XmlText(v)]),
         ];
       case TimeCellValue():
-        final String v = switch (numberFormat) {
-          TimeNumFormat() => numberFormat.writeTime(value),
-          _ => throw Exception(
-              '$numberFormat does not work for ${value.runtimeType}'),
-        };
+        final String v =_valueAsTimeNumFormat(numberFormat,'time', value) ;
         children = [
           XmlElement(XmlName('v'), [], [XmlText(v)]),
         ];
@@ -998,4 +978,36 @@ class Save {
         diagonalBorderUp: cellStyle.diagonalBorderUp,
         diagonalBorderDown: cellStyle.diagonalBorderDown,
       );
+
+  String _valueAsNumericFormat(NumFormat? numberFormat,String format,CellValue? value){
+    NumericNumFormat number =numberFormat! as NumericNumFormat;
+    switch(format){
+      case 'int':
+        return  number.writeInt(value as IntCellValue);
+      case 'double':
+        return number.writeDouble(value as DoubleCellValue);
+      default : return '';
+    }
+  }
+
+  String _valueAsDatetimeFormat(NumFormat? numberFormat,String format,CellValue? value){
+    DateTimeNumFormat number =numberFormat! as DateTimeNumFormat;
+    switch(format){
+      case 'datetime':
+        return  number.writeDateTime(value as DateTimeCellValue);
+      case 'datecellvalue':
+        return number.writeDate(value as DateCellValue);
+      default : return '';
+    }
+  }
+
+  String _valueAsTimeNumFormat(NumFormat? numberFormat,String format,CellValue? value){
+    TimeNumFormat number =numberFormat! as TimeNumFormat;
+    switch(format){
+      case 'time':
+        return  number.writeTime(value as TimeCellValue);
+      default : return '';
+    }
+  }
+
 }
